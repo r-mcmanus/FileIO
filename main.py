@@ -1,22 +1,49 @@
+import csv
 import os
 
-f = open("test.txt")
-print(f.read())
-f.close()
+#open an existing file, reading, parsing the comma separated values into a list of lists, and closing the open file.
+country_list = []
+with open("data/continents.csv") as file:
+    reader = csv.reader(file)
+    country_list = list(reader)
 
-#parsing the words in the text file and storing them in a list
-a_list = []
+#print file information to the console
+print(country_list)
 
-with open('test.txt') as f:
-    a_list = f.read().split()
-f.close()
+#determine the size of a file
+print(f'The size of continents.csv is {os.path.getsize("data/continents.csv")}.')
 
-new_file = open("test2.txt", "w")
-#"w" writes to a file and creates it if it doesn't exist yet.
-for word in a_list:
-    new_file.write(word + ' ')
-new_file.close()
+#create a new file, write data to a file, modify data in a file, determine location within a file, append data to existing file
+with open("data/continents_3.csv") as infile, open('data/continents_3_temp.csv', 'w') as outfile:
+    reader = csv.reader(infile)
+    writer = csv.writer(outfile, lineterminator='\n')
+    for line in reader:
+        if line == ['Africa', 'Angola']:
+            line = writer.writerow(['AFRICA', 'ANGOLA'])
+            print(f'Line {reader.line_num} was modified.')
+            break
+        else:
+            writer.writerow(line)
+    writer.writerows(reader)
+    writer.writerow(['Antarctica', 'Antarctica'])
 
-#getting the size of a file
-file_size = os.path.getsize('test.txt')
-print("File Size is :", file_size, "bytes")
+#inserting data into an existing file
+with open("data/continents_3.csv") as infile, open('data/continents_3_temp.csv', 'w') as outfile:
+    reader = csv.reader(infile)
+    writer = csv.writer(outfile, lineterminator='\n')
+    for line in reader:
+        if reader.line_num == 4:
+            next_line = line
+            line = writer.writerow(['0000', '0000'])
+            writer.writerow(next_line)
+            print(f'Line was inserted at row {reader.line_num}.')
+            break
+        else:
+            writer.writerow(line)
+    writer.writerows(reader)
+
+#delete a file
+os.remove('data/continents_3.csv')
+os.rename('data/continents_3_temp.csv', 'data/continents_3.csv')
+
+
